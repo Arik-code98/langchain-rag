@@ -5,6 +5,9 @@ from langchain_chroma import Chroma
 from langchain_groq import ChatGroq
 from dotenv import load_dotenv
 import os
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
 
 load_dotenv()
 
@@ -28,19 +31,29 @@ vector_store = Chroma(
 
 vector_store.add_documents(all_splits)
 
-question = input("Ask a question: ")
-results = vector_store.similarity_search(question, k=2)
+retriever = vector_store.as_retriever(search_kwargs={"k": 2})
+
+prompt_template = ChatPromptTemplate.from_template("""
+Answer the question based ONLY on the context below.
+If the answer is not in the context, say "I don't know based on the provided document."
+
+Context: {context}
+
+Question: {question}
+""")
+
+def format_docs(docs):
+    return "\n\n".join([doc.page_content for doc in docs])
 
 llm = ChatGroq(model="llama-3.3-70b-versatile", api_key=os.getenv("GROQ_API_KEY"))
 
-context = "\n\n".join([doc.page_content for doc in results])
-prompt = f"""Answer the question based ONLY on the context below. 
-If the answer is not in the context, say "I don't know based on the provided document."
+chain = (
+    {"context": retriever | format_docs, "question": RunnablePassthrough()}
+    | prompt_template
+    | llm
+    | StrOutputParser()
+)
 
-Context:
-{context}
-
-Question: {question}"""
-
-response = llm.invoke(prompt)
-print(response.content)
+question = input("Ask a question: ")
+response = chain.invoke(question)
+print(response)
