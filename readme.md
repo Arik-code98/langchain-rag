@@ -137,3 +137,12 @@ You will be prompted to enter a question. The answer will be printed to the term
 - `RunnablePassthrough` for passing the question through the chain unchanged
 - Using `ChatGroq` as a LangChain-compatible LLM
 - Grounded prompting with an explicit fallback ("I don't know based on the provided document")
+  
+---
+ 
+## Limitations and Improvements
+ 
+- **Single document only**: The pipeline loads one hardcoded file (`example.txt`). Extending it to accept dynamic file paths or multiple documents would make it more flexible.
+- **No deduplication on re-run**: Running the script multiple times on the same file will add duplicate chunks to the vector store. Adding a check before inserting would prevent this.
+- **CLI only**: The pipeline runs in the terminal. Wrapping it in a FastAPI endpoint would make it ready for integration with a frontend or other services.
+- **Fixed chunk size**: `chunk_size=500` and `chunk_overlap=50` are hardcoded. Making these configurable via environment variables or CLI arguments would allow better tuning per document type.
