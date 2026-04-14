@@ -4,41 +4,7 @@ A Retrieval-Augmented Generation (RAG) pipeline rebuilt using LangChain. This ve
 
 ---
 
-## How It Works
 
-```
-example.txt
-      |
-      v
-TextLoader  -->  RecursiveCharacterTextSplitter
-                 (chunk_size=500, overlap=50)
-      |
-      v
-HuggingFaceEmbeddings (all-MiniLM-L6-v2)
-      |
-      v
-Chroma Vector Store  (persisted to ./chroma_langchain_db)
-      |
-      v
-User Question
-      |
-      v
-LCEL Chain:
-  retriever | format_docs  -->  {context}
-  RunnablePassthrough()    -->  {question}
-      |
-      v
-  ChatPromptTemplate
-      |
-      v
-  ChatGroq (LLaMA 3.3 70B)
-      |
-      v
-  StrOutputParser()
-      |
-      v
-  Answer printed to terminal
-```
 
 ---
 
