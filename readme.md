@@ -1,4 +1,6 @@
+# RAG Pipeline — LangChain Edition
 
+A Retrieval-Augmented Generation (RAG) pipeline rebuilt using LangChain. This version replaces the manual embedding and ChromaDB setup from the previous iteration with LangChain's document loaders, text splitters, and vector store abstractions — resulting in cleaner code and persistent vector storage across runs. This iteration further introduces LCEL (LangChain Expression Language) to replace manual prompt construction with a declarative, composable chain.
 
 ---
 
